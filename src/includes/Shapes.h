@@ -6,6 +6,7 @@
 #include <Colors.h>
 #include <Utils.h>
 #include <Cursor.h>
+#include <Buffering.h>
 
 void Box(char *title,
             char *body,

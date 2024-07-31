@@ -2,15 +2,57 @@
 
 #define MAX_LINES 100
 
-
-void Box(char *title,
-            char *body,
-            char *footer,
-            char *color,
-            char *info,
-            COORD size)
+static void enterLineDrawingMode(BufferStream_t *stream)
 {
-    hideCursor();
+    writeBufferStream(stream, ESC "(0", STRLEN_ESC + 2);
+}
+
+static void exitLineDrawingMode(BufferStream_t *stream)
+{
+    writeBufferStream(stream, ESC "(B", STRLEN_ESC + 2);
+}
+
+static void writeSpace(BufferStream_t *stream)
+{
+    writeBufferStream(stream, " ", 1);
+}
+
+static void writeNewLine(BufferStream_t *stream)
+{
+    writeBufferStream(stream, "\n", 1);
+}
+
+static void writeColoredText(BufferStream_t *stream, char *text, const char *color)
+{
+    char *coloredText = callColor(text, color);
+    writeBufferStream(stream, coloredText, strlen(coloredText));
+    free(coloredText);
+}
+
+static void writeLine(BufferStream_t *stream, char *line, char *verticalLine, int width)
+{
+    enterLineDrawingMode(stream);
+    writeSpace(stream);
+    writeBufferStream(stream, verticalLine, strlen(verticalLine));
+    writeSpace(stream);
+    exitLineDrawingMode(stream);
+    writeBufferStream(stream, line, strlen(line));
+    writeSpace(stream);
+    int numSpaces = width - strlen(line);
+    char *spaces = strrepeat(" ", numSpaces);
+    writeBufferStream(stream, spaces, numSpaces);
+    free(spaces);
+    enterLineDrawingMode(stream);
+    writeBufferStream(stream, verticalLine, strlen(verticalLine));
+    exitLineDrawingMode(stream);
+    writeNewLine(stream);
+}
+
+void Box(char *title, char *body, char *footer, char *color, char *info, COORD size)
+{
+    char *buf;
+    size_t buf_size = 0;
+    BufferStream_t *stream = openBufferStream(&buf, &buf_size);
     int minWidth = min(size.X, 60);
 
     char *bodyLines[MAX_LINES];
@@ -19,87 +61,81 @@ void Box(char *title,
     int numBodyLines = splitLines(body, bodyLines, MAX_LINES);
     int numFooterLines = splitLines(footer, footerLines, MAX_LINES);
 
-    const char *allLines[MAX_LINES*2];
+    const char *allLines[MAX_LINES * 2];
     int numAllLines = 0;
 
-    for (int i = 0; i < numBodyLines; i++) {
-        allLines[numAllLines] = bodyLines[i];
-        numAllLines++;
+    for (int i = 0; i < numBodyLines; i++)
+    {
+        allLines[numAllLines++] = bodyLines[i];
     }
 
-    for (int i = 0; i < numFooterLines; i++) {
-        allLines[numAllLines] = footerLines[i];
-        numAllLines++;
+    for (int i = 0; i < numFooterLines; i++)
+    {
+        allLines[numAllLines++] = footerLines[i];
     }
 
-    allLines[numAllLines] = title;
-    numAllLines++;
+    allLines[numAllLines++] = title;
     int width = longestLine(allLines, numAllLines);
 
-    
     int titleLength = strlen(title);
-    char *titleLabel = NULL;
-    titleLabel = (char *)malloc(titleLength + 2 /* space left and right */ + 1 /* null terminator */);
+    char *titleLabel = (char *)malloc(titleLength + 3); // space left and right + null terminator
     allocateFailCheck(titleLabel, "titleLabel");
     sprintf(titleLabel, " %s ", title);
 
-
-
     int times = width - titleLength + (titleLength > 0 ? 0 : 2);
-    char *topBorder = strrepeat("q", times);
-    char *coloredTopBorder = callColor(topBorder, color);
-    free(topBorder);
-    char *bottomBorder = strrepeat("q", width+(titleLength > 0 ? 2 : 0));
-    char *coloredBottomBorder = callColor(bottomBorder, color);
-    free(bottomBorder);
-    char *coloredTopRight = callColor("k", color);
-    char *coloredTopLeft = callColor(" l", color);
-    char *coloredBottomLeft = callColor("m", color);
-    char *coloredBottomRight = callColor("j", color);
+    char *bottomBorder = strrepeat("q", width + (titleLength > 0 ? 2 : 0));
     char *verticalLine = callColor("x", color);
 
-    printf(ESC "(0"); // Enter line drawing mode
-    printf("%s", coloredTopLeft);
-    printf(ESC "(B"); // Exit line drawing mode
-    printf("%s", titleLabel);
-    printf(ESC "(0"); // Enter line drawing mode
-    printf("%s", coloredTopBorder);
-    printf("%s", coloredTopRight);
-    printf(ESC "(B"); // Exit line drawing mode
-    printf("\n");
+    enterLineDrawingMode(stream);
+    writeColoredText(stream, " l", color);
+    exitLineDrawingMode(stream);
+    writeBufferStream(stream, titleLabel, strlen(titleLabel));
+    enterLineDrawingMode(stream);
+    writeColoredText(stream, strrepeat("q", times), color);
+    writeColoredText(stream, "k", color);
+    exitLineDrawingMode(stream);
+    writeNewLine(stream);
 
-    for (int i = 0; i < numBodyLines; i++) {
-        printf(ESC "(0"); // Enter line drawing mode
-        printf(" %s ", verticalLine); // Left border
-        printf(ESC "(B"); // Exit line drawing mode
-        printf("%s ", bodyLines[i]);
-        printf(ESC "(0"); // Enter line drawing mode
-        printf("%*s", width - strlen(bodyLines[i]) + strlen(verticalLine), verticalLine); // Right border
-        printf(ESC "(B"); // Exit line drawing mode
-        printf("\n");
+    for (int i = 0; i < numBodyLines; i++)
+    {
+        writeLine(stream, bodyLines[i], verticalLine, width);
     }
 
-    printf(ESC "(0"); // Enter line drawing mode
-    printf(" %s", coloredBottomLeft);
-    printf("%s", coloredBottomBorder);
-    printf("%s", coloredBottomRight);
-    printf(ESC "(B"); // Exit line drawing mode
+    if (numFooterLines > 0)
+    {
+        enterLineDrawingMode(stream);
+        writeSpace(stream);
+        writeColoredText(stream, "t", color);
+        writeColoredText(stream, bottomBorder, color);
+        writeColoredText(stream, "u", color);
+        exitLineDrawingMode(stream);
+        writeNewLine(stream);
 
+        for (int i = 0; i < numFooterLines; i++)
+        {
+            writeLine(stream, footerLines[i], verticalLine, width);
+        }
+    }
 
-    for (int i = 0; i < numBodyLines; i++) {
+    enterLineDrawingMode(stream);
+    writeSpace(stream);
+    writeColoredText(stream, "m", color);
+    writeColoredText(stream, bottomBorder, color);
+    writeColoredText(stream, "j", color);
+    exitLineDrawingMode(stream);
+
+    for (int i = 0; i < numBodyLines; i++)
+    {
         free(bodyLines[i]);
     }
 
-    for (int i = 0; i < numFooterLines; i++) {
+    for (int i = 0; i < numFooterLines; i++)
+    {
         free(footerLines[i]);
     }
-    free(coloredTopLeft);
-    if (titleLength > 0) {
-        free(titleLabel);
-    }
-    free(coloredTopBorder);
-    free(coloredBottomBorder);
-    free(coloredTopRight);
+    free(titleLabel);
+    free(bottomBorder);
     free(verticalLine);
-
+    printBufferStream(stream);
+    closeBufferStream(stream);
 }
