@@ -62,8 +62,13 @@ int main(int argc, WCHAR* argv[]) {
 
     printf(CSI "2;1H");
     
-    Box("Title123 dadskjdfkjk", "Body\nLine2\nLine3dajfhaksjdhkajsdhkajsh", "Footer\nline1", "red", "Info", Size);
+    char *buf;
+    size_t size = 0;
+    BufferStream_t *st = openBufferStream(&buf, &size);
 
+    Box("Title123 dadskjdfkjk", "Body\nLine2\nLine3dajfhaksjdhkajsdhkajsh", "Footer\nline1", "red", "Info", Size, st);
+    printBufferStream(st);
+    closeBufferStream(st);
 
     wchar_t wch;
     wch = _getwch();

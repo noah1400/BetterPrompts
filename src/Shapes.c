@@ -48,11 +48,8 @@ static void writeLine(BufferStream_t *stream, char *line, char *verticalLine, in
     writeNewLine(stream);
 }
 
-void Box(char *title, char *body, char *footer, char *color, char *info, COORD size)
+void Box(char *title, char *body, char *footer, char *color, char *info, COORD size, BufferStream_t *stream)
 {
-    char *buf;
-    size_t buf_size = 0;
-    BufferStream_t *stream = openBufferStream(&buf, &buf_size);
     int minWidth = min(size.X, 60);
 
     char *bodyLines[MAX_LINES];
@@ -136,6 +133,4 @@ void Box(char *title, char *body, char *footer, char *color, char *info, COORD s
     free(titleLabel);
     free(bottomBorder);
     free(verticalLine);
-    printBufferStream(stream);
-    closeBufferStream(stream);
 }

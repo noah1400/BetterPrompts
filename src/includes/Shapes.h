@@ -13,6 +13,7 @@ void Box(char *title,
             char *footer,
             char *color,
             char *info,
-            COORD size);
+            COORD size,
+            BufferStream_t *stream);
 
 #endif // SHAPES_H
