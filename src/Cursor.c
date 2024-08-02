@@ -19,3 +19,7 @@ void moveCursorUp(char n) {
 void moveCursorToColumn(char x) {
     printf(CSI "%dG", x);
 }
+
+void eraseDown() {
+    printf(CSI "J");
+}

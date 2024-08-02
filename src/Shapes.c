@@ -72,7 +72,7 @@ void Box(char *title, char *body, char *footer, char *color, char *info, COORD s
     }
 
     allLines[numAllLines++] = title;
-    int width = longestLine(allLines, numAllLines);
+    int width = max(20,longestLine(allLines, numAllLines));
 
     int titleLength = strlen(title);
     char *titleLabel = (char *)malloc(titleLength + 3); // space left and right + null terminator

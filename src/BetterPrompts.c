@@ -7,6 +7,7 @@
 
 #include <Colors.h>
 #include <Shapes.h>
+#include <Prompts.h>
 
 #ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
 #define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
@@ -61,17 +62,7 @@ int main(int argc, WCHAR* argv[]) {
     printf(CSI "0m");
 
     printf(CSI "2;1H");
-    
-    char *buf;
-    size_t size = 0;
-    BufferStream_t *st = openBufferStream(&buf, &size);
 
-    Box("Title123 dadskjdfkjk", "Body\nLine2\nLine3dajfhaksjdhkajsdhkajsh", "Footer\nline1", "red", "Info", Size, st);
-    printBufferStream(st);
-    closeBufferStream(st);
-
-    wchar_t wch;
-    wch = _getwch();
-
+    textPrompt("Title", "Footer", Size);
     printf(CSI "?1049l");
 }

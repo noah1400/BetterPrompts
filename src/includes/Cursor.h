@@ -12,5 +12,6 @@ void showCursor();
 void moveCursor(char x, char y);
 void moveCursorUp(char n);
 void moveCursorToColumn(char x);
+void eraseDown();
 
 #endif // CURSOR_H
