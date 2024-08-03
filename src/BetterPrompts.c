@@ -58,11 +58,13 @@ int main(int argc, WCHAR* argv[]) {
     printf(CSI "?1049h");
     printf(CSI "1;1H");
     printf(CSI "102;30m");
-    printf("Better Prompts");
+    printf("Answer the prompts below:");
     printf(CSI "0m");
 
     printf(CSI "2;1H");
 
-    textPrompt("Title", "Footer", Size);
+    char *input = textPrompt("What is your name?", "We need your name to know how we should call you.", Size);
     printf(CSI "?1049l");
+
+    printf("Your name is: %s\n", input);
 }

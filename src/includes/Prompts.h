@@ -8,7 +8,7 @@
 #include <Terminal.h>
 #include <Cursor.h>
 
-void textPrompt(
+char *textPrompt(
             char *title,
             char *footer,
             COORD size);

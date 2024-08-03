@@ -17,6 +17,7 @@ BufferStream_t *openBufferStream(char **buffer, size_t *size)
 void closeBufferStream(BufferStream_t *stream)
 {
     free(*(stream->buffer));
+    *(stream->buffer) = NULL;
     *(stream->size) = 0;
     free(stream);
 }
@@ -42,4 +43,26 @@ void printBufferStream(BufferStream_t *stream)
     for (size_t i = 0; i < *(stream->size); i++) {
         putchar(*(*(stream->buffer) + i));
     }
+}
+
+char* readBufferStreamAsString(BufferStream_t *stream) {
+    // Ensure there's data in the stream
+    if (*(stream->size) == 0) {
+        return NULL; // or return an empty string if preferred
+    }
+
+    // Allocate memory for the string (including null terminator)
+    char *result = (char *)malloc(*(stream->size) + 1); 
+    if (result == NULL) {
+        // Handle allocation failure (log, return error, etc.)
+        return NULL;
+    }
+
+    // Copy data from the buffer to the string
+    memcpy(result, *(stream->buffer), *(stream->size));
+
+    // Add the null terminator
+    result[*(stream->size)] = '\0'; 
+
+    return result;
 }

@@ -55,20 +55,26 @@ void Box(char *title, char *body, char *footer, char *color, char *info, COORD s
     char *bodyLines[MAX_LINES];
     char *footerLines[MAX_LINES];
 
-    int numBodyLines = splitLines(body, bodyLines, MAX_LINES);
-    int numFooterLines = splitLines(footer, footerLines, MAX_LINES);
+    int numBodyLines = 0;
+    int numFooterLines = 0;
 
     const char *allLines[MAX_LINES * 2];
     int numAllLines = 0;
 
-    for (int i = 0; i < numBodyLines; i++)
-    {
-        allLines[numAllLines++] = bodyLines[i];
+    if (body != NULL) {
+        numBodyLines = splitLines(body, bodyLines, MAX_LINES);
+        for (int i = 0; i < numBodyLines; i++)
+        {
+            allLines[numAllLines++] = bodyLines[i];
+        }
     }
 
-    for (int i = 0; i < numFooterLines; i++)
-    {
-        allLines[numAllLines++] = footerLines[i];
+    if (footer != NULL) {
+        numFooterLines = splitLines(footer, footerLines, MAX_LINES);
+        for (int i = 0; i < numFooterLines; i++)
+        {
+            allLines[numAllLines++] = footerLines[i];
+        }
     }
 
     allLines[numAllLines++] = title;
@@ -93,9 +99,15 @@ void Box(char *title, char *body, char *footer, char *color, char *info, COORD s
     exitLineDrawingMode(stream);
     writeNewLine(stream);
 
-    for (int i = 0; i < numBodyLines; i++)
+
+    if (numBodyLines == 0)
     {
-        writeLine(stream, bodyLines[i], verticalLine, width);
+        writeLine(stream, "", verticalLine, width);
+    } else {
+        for (int i = 0; i < numBodyLines; i++)
+        {
+            writeLine(stream, bodyLines[i], verticalLine, width);
+        }
     }
 
     if (numFooterLines > 0)
@@ -120,7 +132,6 @@ void Box(char *title, char *body, char *footer, char *color, char *info, COORD s
     writeColoredText(stream, bottomBorder, color);
     writeColoredText(stream, "j", color);
     exitLineDrawingMode(stream);
-
     for (int i = 0; i < numBodyLines; i++)
     {
         free(bodyLines[i]);

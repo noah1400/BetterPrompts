@@ -1,7 +1,7 @@
 #include <Terminal.h>
 
-char readChar() {
-    char ch;
+unsigned char readChar() {
+    unsigned char ch;
     ch = _getch();
     return ch;
 }

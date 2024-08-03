@@ -4,6 +4,6 @@
 #include <wchar.h>
 
 
-char readChar();
+unsigned char readChar();
 
 #endif // TERMINAL_H
