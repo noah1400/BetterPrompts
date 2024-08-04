@@ -62,15 +62,12 @@ void printBufferStream(BufferStream_t *stream)
 char* readBufferStreamAsString(BufferStream_t *stream) {
     // Ensure there's data in the stream
     if (*(stream->size) == 0) {
-        return NULL; // or return an empty string if preferred
+        return "";
     }
 
     // Allocate memory for the string (including null terminator)
     char *result = (char *)malloc(*(stream->size) + 1); 
-    if (result == NULL) {
-        // Handle allocation failure (log, return error, etc.)
-        return NULL;
-    }
+    allocateFailCheck(result, "result");
 
     // Copy data from the buffer to the string
     memcpy(result, *(stream->buffer), *(stream->size));
