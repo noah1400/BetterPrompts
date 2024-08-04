@@ -9,7 +9,7 @@ char *textPrompt(
     char *buf;
     size_t bufSize = 0;
     BufferStream_t *stream = openBufferStream(&buf, &bufSize);
-    Box(title, NULL, footer, "cyan", "123", size, stream);
+    Box(title, NULL, footer, "cyan", "...YourName...", size, stream);
     printBufferStream(stream);
     closeBufferStream(stream);
 
@@ -26,15 +26,15 @@ char *textPrompt(
         }
         else
         {
-            writeBufferStream(inputStream, wc, 1);
+            writeBufferStream(inputStream, &wc, 1);
         }
-        moveCursor(1, 2);
-        eraseDown();
 
         buf = NULL;
         bufSize = 0;
         stream = openBufferStream(&buf, &bufSize);
-        Box(title, readBufferStreamAsString(inputStream), footer, "cyan", "123", size, stream);
+        Box(title, readBufferStreamAsString(inputStream), footer, "cyan", "...YourName...", size, stream);
+        moveCursor(1, 2);
+        eraseDown();
         printBufferStream(stream);
         closeBufferStream(stream);
         wc = readChar();

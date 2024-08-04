@@ -102,7 +102,9 @@ void Box(char *title, char *body, char *footer, char *color, char *info, COORD s
 
     if (numBodyLines == 0)
     {
-        writeLine(stream, "", verticalLine, width);
+        char *infoColored = callColor(info, "dim");
+        writeLine(stream, infoColored, verticalLine, width+9); // Add 9 for escape sequences of color (TODO: needs to be optimized)
+        free(infoColored);
     } else {
         for (int i = 0; i < numBodyLines; i++)
         {
