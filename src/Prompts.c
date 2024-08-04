@@ -26,11 +26,7 @@ char *textPrompt(
         }
         else
         {
-            char *c = (char *)malloc(2);
-            c[0] = wc;
-            c[1] = '\0';
-            writeBufferStream(inputStream, c, 1);
-            free(c);
+            writeBufferStream(inputStream, wc, 1);
         }
         moveCursor(1, 2);
         eraseDown();
