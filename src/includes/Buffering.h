@@ -8,6 +8,7 @@
 typedef struct BufferStream {
     char **buffer;
     size_t *size;
+    size_t allocatedSize;
 } BufferStream_t;
 
 BufferStream_t *openBufferStream(char **buffer, size_t *size);
@@ -15,5 +16,6 @@ void closeBufferStream(BufferStream_t *stream);
 void writeBufferStream(BufferStream_t *stream, char *data, size_t size);
 void printBufferStream(BufferStream_t *stream);
 char* readBufferStreamAsString(BufferStream_t *stream);
+void removeLastChar(BufferStream_t *stream);
 
 #endif // BUFFERING_H

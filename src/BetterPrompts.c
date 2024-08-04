@@ -67,4 +67,11 @@ int main(int argc, WCHAR* argv[]) {
     printf(CSI "?1049l");
 
     printf("Your name is: %s\n", input);
+
+
+    free(input);
+
+    unsigned char wc = readChar();
+
+    printf("%d\n", wc);
 }

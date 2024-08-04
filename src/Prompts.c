@@ -1,9 +1,9 @@
 #include <Prompts.h>
 
 char *textPrompt(
-            char *title,
-            char *footer,
-            COORD size)
+    char *title,
+    char *footer,
+    COORD size)
 {
     hideCursor();
     char *buf;
@@ -18,13 +18,21 @@ char *textPrompt(
     size_t inputBufSize = 0;
     BufferStream_t *inputStream = openBufferStream(&inputBuf, &inputBufSize);
 
-    while(wc != 13){
-        char *c = (char *)malloc(2);
-        c[0] = wc;
-        c[1] = '\0';
-        writeBufferStream(inputStream, c, 1);
-        free(c);
-        moveCursor(1,2);
+    while (wc != 13)
+    {
+        if (wc == 8)
+        {
+            removeLastChar(inputStream);
+        }
+        else
+        {
+            char *c = (char *)malloc(2);
+            c[0] = wc;
+            c[1] = '\0';
+            writeBufferStream(inputStream, c, 1);
+            free(c);
+        }
+        moveCursor(1, 2);
         eraseDown();
 
         buf = NULL;
@@ -36,11 +44,9 @@ char *textPrompt(
         wc = readChar();
     }
 
-
     char *input = readBufferStreamAsString(inputStream);
     closeBufferStream(inputStream);
     showCursor();
     printf("\n");
     return input;
-
 }
