@@ -9,7 +9,7 @@ char *textPrompt(
     char *buf;
     size_t bufSize = 0;
     BufferStream_t *stream = openBufferStream(&buf, &bufSize);
-    Box(title, NULL, footer, "blue", "123", size, stream);
+    Box(title, NULL, footer, "cyan", "123", size, stream);
     printBufferStream(stream);
     closeBufferStream(stream);
 
@@ -34,7 +34,7 @@ char *textPrompt(
         buf = NULL;
         bufSize = 0;
         stream = openBufferStream(&buf, &bufSize);
-        Box(title, readBufferStreamAsString(inputStream), footer, "blue", "123", size, stream);
+        Box(title, readBufferStreamAsString(inputStream), footer, "cyan", "123", size, stream);
         printBufferStream(stream);
         closeBufferStream(stream);
         wc = readChar();
